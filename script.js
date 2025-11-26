@@ -32,7 +32,7 @@ const themeLibrary = [
 let currentConcIndex = 2;
 const concentrationOptions = [
     { name: 'Disabled', value: 0 },
-    { name: '30 sec (Test)', value: 0.5 },
+    { name: '30 sec', value: 0.5 },
     { name: '5 min', value: 5 },
     { name: '10 min', value: 10 },
     { name: '15 min', value: 15 }
@@ -44,7 +44,6 @@ function showModal(message) {
     
     if (overlay && msgElement) {
         msgElement.textContent = message;
-        // Rimuovi hidden e aggiungi active
         overlay.classList.remove('hidden');
         overlay.classList.add('active');
     }
@@ -321,7 +320,6 @@ function updateDropdownUI(wrapperId, index, dataList) {
     });
 }
 
-// Callback Dropdown
 function onAudioChange(index) { 
     currentAudioIndex = index; 
     changeTrack(index); 
@@ -415,7 +413,6 @@ function changeTheme(index, doSave = true) {
     if (doSave) saveState();
 }
 
-// --- LOGICA CONCENTRAZIONE ---
 function startConcentrationTimer() {
     stopConcentrationTimer(); 
     
