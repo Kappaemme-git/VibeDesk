@@ -1,16 +1,14 @@
-/* --- BASE & TYPOGRAPHY --- */
 html, body {
     height: 100%;
-    height: 100svh; /* FIX MOBILE: Usa l'altezza "piccola" reale del viewport */
+    height: 100svh; 
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Niente scroll della pagina */
+    overflow: hidden; 
     font-family: 'Quicksand', sans-serif; 
     color: #ffffff; 
-    -webkit-tap-highlight-color: transparent; /* Rimuove il flash blu al tocco su Android */
+    -webkit-tap-highlight-color: transparent; 
 }
 
-/* SFONDO FISSO */
 #background-media {
     position: fixed;
     top: 0;
@@ -19,7 +17,7 @@ html, body {
     height: 100vh;
     height: 100svh;
     z-index: -1;
-    background-color: #1c1e26; /* Colore fallback */
+    background-color: #1c1e26; 
 }
 
 #background-media video,
@@ -48,7 +46,6 @@ html, body {
     box-sizing: border-box;
 }
 
-/* --- TIMER DISPLAY --- */
 #timer-display {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
@@ -65,7 +62,6 @@ html, body {
     font-size: clamp(3rem, 10vw, 10rem); 
 }
 
-/* --- MAIN CONTROLS (Start/Reset/Settings) --- */
 #main-controls {
     display: flex;
     gap: 12px; 
@@ -110,7 +106,6 @@ html, body {
     font-size: 1.2rem;
 }
 
-/* --- SETTINGS PANEL --- */
 #settings-panel {
     position: absolute;
     top: 50%; 
@@ -191,7 +186,6 @@ html, body {
     justify-content: center;
 }
 
-/* --- CUSTOM SELECT --- */
 .custom-select-wrapper {
     position: relative;
     user-select: none;
@@ -216,7 +210,7 @@ html, body {
 .custom-options {
     position: absolute;
     display: block;
-    bottom: 110%; /* Menu si apre verso l'ALTO */
+    bottom: 110%; 
     top: auto;    
     left: 0;
     right: 0;
@@ -254,7 +248,6 @@ html, body {
     color: #fff;
 }
 
-/* --- BOTTOM CONTROLS & FOOTER --- */
 .fixed-control-btn {
     background-color: rgba(51, 51, 51, 0.9); 
     backdrop-filter: blur(5px);
@@ -273,11 +266,10 @@ html, body {
     z-index: 1000;
 }
 
-/* FOOTER CREDITS & SOCIAL */
 #credits-footer {
     position: fixed;
     bottom: 25px;
-    right: 25px; /* Desktop: Destra */
+    right: 25px; 
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -294,7 +286,6 @@ html, body {
 #credits-footer a { color: #fff; text-decoration: none; font-size: 1.1rem; }
 .social-separator { width: 1px; height: 16px; background: rgba(255,255,255,0.3); }
 
-/* STILE CAFFÈ (Desktop Default) */
 .coffee-btn {
     display: flex;
     align-items: center;
@@ -308,18 +299,16 @@ html, body {
     text-decoration: none;
     transition: background 0.3s;
 }
-.coffee-btn i { color: #ffffff; } /* Icona bianca */
-.coffee-btn .coffee-text span { color: #ffffff; } /* Cuore bianco */
+.coffee-btn i { color: #ffffff; }
+.coffee-btn .coffee-text span { color: #ffffff; } 
 .coffee-btn:hover { background: rgba(255, 255, 255, 0.2); }
 
-/* Fullscreen Button (Desktop) */
 #fullscreen-button {
     position: fixed; 
     bottom: 25px;
     left: 25px;
 }
 
-/* Audio Controls (Desktop) */
 #audio-controls-fixed {
     position: fixed; 
     bottom: 25px;
@@ -365,7 +354,6 @@ html, body {
 .hidden { display: none !important; }
 
 
-/* --- MODAL / POPUP OVERLAY --- */
 #custom-modal-overlay {
     position: fixed;
     top: 0;
@@ -374,7 +362,7 @@ html, body {
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
-    z-index: 99999; /* Z-Index altissimo */
+    z-index: 99999; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -428,10 +416,8 @@ html, body {
 #modal-close-btn:hover { transform: scale(1.05); background: #ff6b4a; }
 
 
-/* --- MEDIA QUERIES: MOBILE & TABLET --- */
 @media (max-width: 768px) {
     
-    /* 1. Timer più piccolo */
     #timer-display {
         margin-bottom: 20px;
         font-size: clamp(4rem, 18vw, 7rem);
@@ -440,7 +426,6 @@ html, body {
         font-size: clamp(2.5rem, 12vw, 5rem);
     }
 
-    /* 2. Bottoni principali ridotti */
     #main-controls {
         padding: 8px 15px;
         gap: 10px;
@@ -451,7 +436,6 @@ html, body {
         font-size: 0.9rem;
     }
 
-    /* 3. Settings Panel: Alzato e centrato */
     #settings-panel {
         width: 90%;
         top: 50%;
@@ -469,50 +453,41 @@ html, body {
     }
     .custom-select-wrapper { width: 100%; }
 
-    /* 4. FOOTER MOBILE */
     #credits-footer {
         left: 15px;
         right: auto;
         bottom: 20px;
         padding: 8px 12px;
-        max-width: 60%; /* Evita sovrapposizioni */
+        max-width: 60%; 
     }
     
-    /* Nascondi i testi "Created by" */
     #credits-footer > span:first-child { display: none; }
     .social-separator { display: none; }
 
-    /* --- FIX BUY ME A COFFEE SU MOBILE --- */
-    /* Nascondi il testo "Buy me a coffee" */
     .coffee-text { display: none; }
     
-    /* Rendi il bottone quadrato (solo icona) */
     .coffee-btn {
         padding: 8px;
         aspect-ratio: 1/1;
         justify-content: center;
-        border-radius: 50%; /* Icona rotonda è più bella su mobile */
+        border-radius: 50%; 
         min-width: 35px;
     }
 
-    /* 5. AUDIO CONTROLS */
     #audio-controls-fixed {
         left: auto;
-        right: 15px; /* Spostato a destra */
+        right: 15px; 
         bottom: 20px;
         gap: 10px;
     }
 
-    /* --- FIX FULLSCREEN SU MOBILE --- */
-    /* Nascondi completamente il bottone ingrandisci su mobile */
     #fullscreen-button {
         display: none !important;
     }
 
-    /* Mini Player Mobile Compatto */
     #mini-player-details {
         position: absolute;
-        bottom: 55px; /* Si apre sopra il bottone */
+        bottom: 55px; 
         right: 0;
         flex-direction: column;
         align-items: flex-end;
