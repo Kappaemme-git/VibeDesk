@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VibeDesk | Lofi Focus Timer</title>
+    
+    <!-- MANIFEST PWA -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- --- CONFIGURAZIONE APP IOS (Apple) --- -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VibeDesk">
+    
+    <!-- ICONA APPLE (Modificata) -->
+    <link rel="apple-touch-icon" href="images/unnamed.jpg">
+    
+    <!-- --- CONFIGURAZIONE APP ANDROID --- -->
+    <meta name="theme-color" content="#1c1e26">
+
+    <!-- FAVICON BROWSER (Modificata) -->
+    <link rel="icon" type="image/png" href="images/20200603_224956931_iOS.png">
+
+    <!-- Stili -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div id="background-media"></div>
+    
+    <div id="app-container">
+        
+        <div id="timer-display">25:00</div>
+
+        <div id="main-controls">
+            <button id="start-btn">Start</button>
+            <button id="reset-btn">Reset</button>
+            <button id="settings-btn" title="Impostazioni">
+                <i class="fas fa-cog"></i> 
+            </button>
+        </div>
+
+        <div id="settings-panel">
+            <button id="close-settings-btn" title="Chiudi"><i class="fas fa-times"></i></button>
+            <h3 style="margin: 0 0 20px 0; font-size: 1.2rem; color: #ddd;">Settings</h3>
+            
+            <div id="config-timer">
+                <label for="minutes-input">Duration (minutes):</label>
+                <input type="number" id="minutes-input" value="25" min="1" max="600">
+                <button id="set-time-btn">Set</button>
+            </div>
+            
+            <div id="concentration-controls">
+                <label>Concentration Popup:</label>
+                <div class="custom-select-wrapper" id="concentration-custom-select">
+                    <div class="custom-select__trigger"><span>10 min</span><div class="arrow"></div></div>
+                    <div class="custom-options"></div>
+                </div>
+            </div>
+            
+            <div id="theme-controls">
+                <label>Lofi Background:</label>
+                <div class="custom-select-wrapper" id="theme-custom-select">
+                    <div class="custom-select__trigger"><span>Select Background</span><div class="arrow"></div></div>
+                    <div class="custom-options"></div>
+                </div>
+            </div>
+        </div>
+
+    </div> 
+    
+    <div id="credits-footer">
+        <span>Created by <strong>Kappaemme</strong></span>
+        <div class="social-separator"></div>
+        <a href="https://x.com/Kappaemme1926" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://github.com/Kappaemme-git" target="_blank"><i class="fa-brands fa-github"></i></a>
+
+
+       <a href="https://www.paypal.com/paypalme/FrancescoMistero" target="_blank" class="coffee-btn" aria-label="Buy me a coffee">
+        <i class="fas fa-coffee"></i>
+        <span class="coffee-text">&nbsp;Buy me a coffee ❤️</span>
+    </a>
+
+
+    </div>
+
+    <button id="fullscreen-button" class="fixed-control-btn"><i class="fas fa-expand-arrows-alt"></i></button>
+    
+    <div id="audio-controls-fixed">
+        <button id="audio-menu-toggle" class="fixed-control-btn"><i class="fas fa-music"></i></button>
+        
+        <div id="mini-player-details" class="hidden">
+            <div class="custom-select-wrapper" id="audio-custom-select">
+                <div class="custom-select__trigger"><span>Radio Lofi</span><div class="arrow"></div></div>
+                <div class="custom-options"></div>
+            </div>
+            <audio id="lofi-player" loop></audio>
+            <button id="mini-player-play-btn"><i class="fas fa-play"></i></button>
+            <div id="volume-control">
+                <label>Vol:</label>
+                <input type="range" id="volume-slider" min="0" max="100" value="50">
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP CONCENTRAZIONE -->
+    <div id="custom-modal-overlay" class="hidden">
+        <div id="custom-modal">
+            <div class="modal-icon">🔥</div>
+            <h3 id="modal-title">VibeDesk Focus</h3>
+            <p id="modal-message">Stay focused!</p>
+            <button id="modal-close-btn">Got it</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
