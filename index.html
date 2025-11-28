@@ -17,6 +17,7 @@
 
     <link rel="icon" type="image/png" href="images/20200603_224956931_iOS.png">
     <script defer src="/_vercel/insights/script.js"></script>
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -72,13 +73,10 @@
         <a href="https://x.com/Kappaemme1926" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
         <a href="https://github.com/Kappaemme-git" target="_blank"><i class="fa-brands fa-github"></i></a>
 
-
-       <a href="https://www.paypal.com/paypalme/FrancescoMistero" target="_blank" class="coffee-btn" aria-label="Buy me a coffee">
-        <i class="fas fa-coffee"></i>
-        <span class="coffee-text">&nbsp;Buy me a coffee ❤️</span>
-    </a>
-
-
+        <a href="https://www.paypal.com/paypalme/FrancescoMistero" target="_blank" class="coffee-btn" aria-label="Buy me a coffee">
+            <i class="fas fa-coffee"></i>
+            <span class="coffee-text">&nbsp;Buy me a coffee ❤️</span>
+        </a>
     </div>
 
     <button id="fullscreen-button" class="fixed-control-btn"><i class="fas fa-expand-arrows-alt"></i></button>
@@ -87,16 +85,47 @@
         <button id="audio-menu-toggle" class="fixed-control-btn"><i class="fas fa-music"></i></button>
         
         <div id="mini-player-details" class="hidden">
-            <div class="custom-select-wrapper" id="audio-custom-select">
-                <div class="custom-select__trigger"><span>Radio Lofi</span><div class="arrow"></div></div>
-                <div class="custom-options"></div>
+            
+            <div class="audio-group">
+                <div class="group-header">
+                    <label><i class="fas fa-music"></i> Music Station</label>
+                    <button id="mini-player-play-btn" class="play-btn-circle"><i class="fas fa-play"></i></button>
+                </div>
+                
+                <div class="custom-select-wrapper" id="audio-custom-select">
+                    <div class="custom-select__trigger"><span>Radio Lofi</span><div class="arrow"></div></div>
+                    <div class="custom-options"></div>
+                </div>
+
+                <div class="volume-container">
+                    <i class="fas fa-volume-down small-icon"></i>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50">
+                    <i class="fas fa-volume-up small-icon"></i>
+                </div>
             </div>
+
+            <div class="separator-line"></div>
+
+            <div class="audio-group">
+                <div class="group-header">
+                    <label><i class="fas fa-cloud-moon"></i> Background Noise</label>
+                </div>
+
+                <div class="custom-select-wrapper" id="ambient-custom-select">
+                    <div class="custom-select__trigger"><span>No Noise</span><div class="arrow"></div></div>
+                    <div class="custom-options"></div>
+                </div>
+
+                <div class="volume-container">
+                    <i class="fas fa-wind small-icon"></i>
+                    <input type="range" id="ambient-volume-slider" min="0" max="100" value="30">
+                    <i class="fas fa-cloud-showers-heavy small-icon"></i>
+                </div>
+            </div>
+
             <audio id="lofi-player" loop></audio>
-            <button id="mini-player-play-btn"><i class="fas fa-play"></i></button>
-            <div id="volume-control">
-                <label>Vol:</label>
-                <input type="range" id="volume-slider" min="0" max="100" value="50">
-            </div>
+            <audio id="ambient-player" loop></audio>
+
         </div>
     </div>
 

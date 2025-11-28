@@ -1,14 +1,18 @@
+/* --- RESET & BASE --- */
 html, body {
     height: 100%;
-    height: 100svh; 
+    height: 100svh;
     margin: 0;
     padding: 0;
     overflow: hidden; 
     font-family: 'Quicksand', sans-serif; 
     color: #ffffff; 
+    
+    /* FIX: Togliamo il colore qui altrimenti copre il video! */
+    background-color: transparent; 
+    
     -webkit-tap-highlight-color: transparent; 
 }
-
 #background-media {
     position: fixed;
     top: 0;
@@ -17,6 +21,8 @@ html, body {
     height: 100vh;
     height: 100svh;
     z-index: -1;
+    
+    /* FIX: Il colore di riserva lo mettiamo QUI, sotto al video */
     background-color: #1c1e26; 
 }
 
@@ -33,6 +39,7 @@ html, body {
     object-fit: cover;
 }
 
+/* --- LAYOUT PRINCIPALE --- */
 #app-container {
     position: relative;
     z-index: 1;
@@ -46,6 +53,7 @@ html, body {
     box-sizing: border-box;
 }
 
+/* --- TIMER DISPLAY --- */
 #timer-display {
     font-family: 'Quicksand', sans-serif;
     font-weight: 700;
@@ -54,14 +62,16 @@ html, body {
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.7), 0 0 5px rgba(0, 0, 0, 0.5); 
     text-align: center;
     line-height: 1;
-    font-size: clamp(4rem, 15vw, 14rem); 
+    /* Responsive font size */
+    font-size: clamp(4rem, 15vw, 12rem); 
     transition: font-size 0.3s ease;
 }
 
 #timer-display.long-text {
-    font-size: clamp(3rem, 10vw, 10rem); 
+    font-size: clamp(3rem, 10vw, 9rem); 
 }
 
+/* --- CONTROLLI PRINCIPALI (Start/Reset) --- */
 #main-controls {
     display: flex;
     gap: 12px; 
@@ -96,7 +106,7 @@ html, body {
 }
 
 #settings-btn {
-    padding: 0;
+    padding: 0 !important;
     width: 45px;
     height: 45px;
     border-radius: 50% !important; 
@@ -106,6 +116,7 @@ html, body {
     font-size: 1.2rem;
 }
 
+/* --- PANNELLO IMPOSTAZIONI (Centrale) --- */
 #settings-panel {
     position: absolute;
     top: 50%; 
@@ -123,7 +134,7 @@ html, body {
     width: 380px; 
     max-width: 90%; 
     max-height: 75vh; 
-    overflow: visible; 
+    overflow: visible !important;
     z-index: 2000;
 }
 
@@ -145,6 +156,7 @@ html, body {
     justify-content: space-between; 
     gap: 10px;
     margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 #settings-panel label { font-weight: 500; color: #ccc; font-size: 0.9rem; }
@@ -162,7 +174,6 @@ html, body {
 
 #set-time-btn {
     padding: 8px 15px;
-    font-size: 0.9rem;
     border-radius: 8px;
     background: #7B68EE; 
     color: white; 
@@ -186,11 +197,13 @@ html, body {
     justify-content: center;
 }
 
+/* --- DROPDOWN CUSTOM (Usati nei Settings e Audio) --- */
 .custom-select-wrapper {
     position: relative;
     user-select: none;
     min-width: 140px;
     font-size: 0.9rem;
+    flex: 1;
 }
 
 .custom-select__trigger {
@@ -201,17 +214,19 @@ html, body {
     padding: 8px 12px;
     font-weight: 500;
     color: #fff;
-    background: #2a2a2a; 
-    border: 1px solid #444;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     cursor: pointer;
+    transition: 0.2s;
 }
+
+.custom-select__trigger:hover { background: rgba(255, 255, 255, 0.1); }
 
 .custom-options {
     position: absolute;
     display: block;
-    bottom: 110%; 
-    top: auto;    
+    bottom: 105%; /* Apre verso l'alto di default */
     left: 0;
     right: 0;
     background: #2a2a2a; 
@@ -248,15 +263,15 @@ html, body {
     color: #fff;
 }
 
+/* --- TASTI FLOTTANTI (Fullscreen & Audio Toggle) --- */
 .fixed-control-btn {
-    background-color: rgba(51, 51, 51, 0.9); 
+    background-color: rgba(20, 20, 20, 0.8); 
     backdrop-filter: blur(5px);
     color: white;
     border: 1px solid rgba(255,255,255,0.2); 
     border-radius: 14px; 
-    padding: 12px; 
+    padding: 0;
     font-size: 1.2rem; 
-    line-height: 1; 
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -264,8 +279,126 @@ html, body {
     width: 45px;
     height: 45px;
     z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
 }
 
+.fixed-control-btn:hover { transform: scale(1.05); background-color: rgba(40, 40, 40, 0.9); }
+
+#fullscreen-button {
+    position: fixed; 
+    bottom: 25px;
+    left: 25px;
+}
+
+#audio-controls-fixed {
+    position: fixed; 
+    bottom: 25px;
+    left: 85px; /* Accanto al fullscreen */
+    z-index: 1000;
+}
+
+/* --- NUOVO DESIGN MIXER AUDIO (Verticale & Glass) --- */
+#mini-player-details {
+    position: absolute;
+    bottom: 60px; /* Sopra il bottone */
+    left: 0;
+    width: 300px;
+    background: rgba(15, 15, 20, 0.95); 
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    color: white;
+    z-index: 1000;
+    
+    /* Animazione Entrata */
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#mini-player-details:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+}
+
+.audio-group { margin-bottom: 5px; }
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.group-header label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    display: flex; align-items: center; gap: 8px;
+}
+
+/* Bottone Play Rotondo nel Mixer */
+.play-btn-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #7B68EE;
+    border: none;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(123, 104, 238, 0.3);
+}
+.play-btn-circle:hover { transform: scale(1.1); background: #8e7bf9; }
+
+.separator-line {
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    margin: 15px 0;
+}
+
+/* Slider Volume Custom */
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0 0 0;
+}
+
+.small-icon { font-size: 0.8rem; color: #666; width: 20px; text-align: center; }
+
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-top: -5px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+}
+
+/* --- FOOTER & CREDITI --- */
 #credits-footer {
     position: fixed;
     bottom: 25px;
@@ -287,99 +420,29 @@ html, body {
 .social-separator { width: 1px; height: 16px; background: rgba(255,255,255,0.3); }
 
 .coffee-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display: flex; align-items: center; gap: 6px;
     background: rgba(255, 255, 255, 0.1);
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: bold;
-    color: #fff;
-    text-decoration: none;
+    color: #fff; text-decoration: none;
     transition: background 0.3s;
 }
-.coffee-btn i { color: #ffffff; }
-.coffee-btn .coffee-text span { color: #ffffff; } 
 .coffee-btn:hover { background: rgba(255, 255, 255, 0.2); }
 
-#fullscreen-button {
-    position: fixed; 
-    bottom: 25px;
-    left: 25px;
-}
-
-#audio-controls-fixed {
-    position: fixed; 
-    bottom: 25px;
-    left: 85px; 
-    z-index: 1000;
-    display: flex;      
-    align-items: center;
-    gap: 15px;          
-}
-
-#mini-player-details {
-    background: rgba(15, 15, 15, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 8px 12px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: slideRight 0.2s ease-out;
-}
-
-@keyframes slideRight { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-#mini-player-play-btn {
-    background-color: #7B68EE; 
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-#mini-player-details #volume-control { display: flex; align-items: center; gap: 8px; }
-#mini-player-details #volume-slider { width: 70px; height: 4px; border-radius: 2px; }
-#mini-player-details label { font-size: 0.8rem; color: #bbb; }
-
-.hidden { display: none !important; }
-
-
+/* --- MODALE --- */
 #custom-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     z-index: 99999; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    visibility: hidden;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; visibility: hidden;
     transition: opacity 0.3s ease;
 }
-
-#custom-modal-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-#custom-modal-overlay.hidden {
-    display: none !important;
-}
-
+#custom-modal-overlay.active { opacity: 1; visibility: visible; }
 #custom-modal {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(15px);
@@ -389,43 +452,31 @@ html, body {
     text-align: center;
     color: white;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    max-width: 90%;
-    width: 320px;
+    max-width: 90%; width: 320px;
     transform: scale(0.8);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-#custom-modal-overlay.active #custom-modal {
-    transform: scale(1);
-}
-
+#custom-modal-overlay.active #custom-modal { transform: scale(1); }
 .modal-icon { font-size: 3rem; margin-bottom: 15px; }
 #modal-title { margin: 0 0 10px 0; font-size: 1.5rem; }
 #modal-message { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.5; }
-
 #modal-close-btn {
-    background: #ff7e5f;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    border-radius: 50px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s;
+    background: #ff7e5f; color: white; border: none;
+    padding: 10px 25px; border-radius: 50px;
+    font-size: 1rem; cursor: pointer; transition: transform 0.2s;
 }
-#modal-close-btn:hover { transform: scale(1.05); background: #ff6b4a; }
+#modal-close-btn:hover { transform: scale(1.05); }
 
-
+/* --- MEDIA QUERIES (OTTIMIZZAZIONE MOBILE) --- */
 @media (max-width: 768px) {
     
+    /* Timer più piccolo per evitare che esca dallo schermo */
     #timer-display {
         margin-bottom: 20px;
-        font-size: clamp(4rem, 18vw, 7rem);
+        font-size: clamp(3.5rem, 15vw, 6rem);
     }
-    #timer-display.long-text {
-        font-size: clamp(2.5rem, 12vw, 5rem);
-    }
-
+    
+    /* Controlli principali più compatti */
     #main-controls {
         padding: 8px 15px;
         gap: 10px;
@@ -436,35 +487,16 @@ html, body {
         font-size: 0.9rem;
     }
 
-    #settings-panel {
-        width: 90%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        bottom: auto;
-        padding: 20px;
-        z-index: 9999;
-    }
-    #config-timer, #concentration-controls, #theme-controls {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-        width: 100%;
-    }
-    .custom-select-wrapper { width: 100%; }
-
+    /* Footer: Nascondi testi per salvare spazio */
     #credits-footer {
-        left: 15px;
         right: auto;
+        left: 50%;
+        transform: translateX(-50%);
         bottom: 20px;
-        padding: 8px 12px;
-        max-width: 60%; 
+        padding: 8px 15px;
+        white-space: nowrap;
     }
-    
-    #credits-footer > span:first-child { display: none; }
-    .social-separator { display: none; }
-
-    .coffee-text { display: none; }
+    #credits-footer > span:first-child, .coffee-text, .social-separator { display: none; }
     
     .coffee-btn {
         padding: 8px;
@@ -474,27 +506,34 @@ html, body {
         min-width: 35px;
     }
 
-    #audio-controls-fixed {
-        left: auto;
-        right: 15px; 
-        bottom: 20px;
-        gap: 10px;
-    }
-
+    /* Fullscreen nascosto su mobile (spesso non supportato o inutile) */
     #fullscreen-button {
         display: none !important;
     }
 
-    #mini-player-details {
-        position: absolute;
-        bottom: 55px; 
-        right: 0;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 10px;
-        padding: 10px;
-        width: auto;
+    /* POSIZIONAMENTO MENU AUDIO SU MOBILE */
+    #audio-controls-fixed {
+        left: 20px; /* Ancorato a sinistra */
+        bottom: 20px; 
     }
-    #mini-player-details label { display: none; }
-    #mini-player-details .custom-select-wrapper { min-width: 120px; }
+
+    #mini-player-details {
+        left: 0;
+        bottom: 60px; /* Si apre sopra il tasto */
+        width: 280px; /* Leggermente più stretto */
+        padding: 15px;
+    }
+
+    /* Settings Panel Mobile */
+    #settings-panel {
+        width: 90%;
+        max-height: 85vh;
+        padding: 20px;
+    }
+    #config-timer, #concentration-controls, #theme-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .custom-select-wrapper { width: 100%; }
 }
