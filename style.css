@@ -8,7 +8,6 @@ html, body {
     font-family: 'Quicksand', sans-serif; 
     color: #ffffff; 
     
-    /* FIX: Togliamo il colore qui altrimenti copre il video! */
     background-color: transparent; 
     
     -webkit-tap-highlight-color: transparent; 
@@ -22,7 +21,6 @@ html, body {
     height: 100svh;
     z-index: -1;
     
-    /* FIX: Il colore di riserva lo mettiamo QUI, sotto al video */
     background-color: #1c1e26; 
 }
 
