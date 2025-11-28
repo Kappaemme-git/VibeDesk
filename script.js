@@ -20,7 +20,7 @@ const radioLibrary = [
 let currentAmbientIndex = 0;
 const ambientLibrary = [
     { name: '❌ No Noise', url: '' },
-    { name: '💨 Phon (White Noise)', url: 'suoni/phon.mp3' },
+    { name: '💨 White Noise', url: 'suoni/phon.mp3' },
     { name: '🌧️ Rain', url: 'suoni/rain.mp3' },
     { name: '🔥 Fire', url: 'suoni/fire.mp3' },
     { name: '🌊 Ocean', url: 'suoni/ocean.mp3' },
