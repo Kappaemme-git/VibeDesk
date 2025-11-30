@@ -1,3 +1,4 @@
+// --- COSTANTI E STATO ---
 const DEFAULT_TIME_SECONDS = 25 * 60;
 const bellSound = new Audio('audio/bell.mp3'); 
 
@@ -5,6 +6,9 @@ let timeRemaining = DEFAULT_TIME_SECONDS;
 let isRunning = false;
 let timerInterval = null;
 let concentrationTimer = null;
+
+// VARIABILE FONDAMENTALE: Tiene traccia della durata sessione scelta (es. 25 o 5)
+let currentSessionMinutes = 25; 
 
 let audioMenuToggle = null;
 let miniPlayerPlayBtn = null;
@@ -24,21 +28,34 @@ const ambientLibrary = [
     { name: '🌧️ Rain', url: 'suoni/rain.mp3' },
     { name: '🔥 Fire', url: 'suoni/fire.mp3' },
     { name: '🌊 Ocean', url: 'suoni/ocean.mp3' },
-    { name: '🌲 Forest', url: 'suoni/HotNature.mp3' }
+    { name: '🌲 Forest', url: 'suoni/HotNature.mp3' },
+    { name: '🌌 Space', url: 'suoni/space.mp3' }
 ];
 
 let currentThemeIndex = 0;
 const themeLibrary = [
+
     { name: 'Girl Studying', type: 'video', url: 'Video/GirlStudyingLofi.mp4' },
+
     { name: 'Lofi Cat', type: 'video', url: 'Video/lofiCat.mp4' },
+
     { name: 'Girl on Train', type: 'video', url: 'Video/TrainGirl.mp4' },
+
     { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4' },
+
+     { name: 'Galaxy', type: 'video', url: 'Video/Galaxy.mp4' },
+
+     { name: 'FirePlace', type: 'video', url: 'Video/Camino.mp4' },
+
     { name: 'Girl Studying (Static)', type: 'image', url: 'Video/girl.jpg' },
+
     { name: 'LandScape (Static)', type: 'image', url: 'Video/landscape.jpg' },
+
     { name: 'Monte Fuji (Static)', type: 'image', url: 'Video/monte.jpg' },
 
-];
+    { name: 'Space (Static)', type: 'image', url: 'Video/space.jpg' },
 
+];
 let currentConcIndex = 2;
 const concentrationOptions = [
     { name: 'Disabled', value: 0 },
@@ -49,6 +66,39 @@ const concentrationOptions = [
 ];
 
 
+// --- FEATURE: DAILY STATS SYSTEM ---
+function updateStatsUI() {
+    const statEl = document.getElementById('focus-minutes');
+    if (statEl) {
+        let mins = parseFloat(localStorage.getItem('vibeDailyMinutes') || 0);
+        // Mostra numeri interi senza decimali se possibile
+        statEl.textContent = Number.isInteger(mins) ? mins : mins.toFixed(1);
+    }
+}
+
+function checkDailyReset() {
+    const today = new Date().toDateString(); 
+    const lastDate = localStorage.getItem('vibeLastDate');
+
+    if (lastDate !== today) {
+        localStorage.setItem('vibeDailyMinutes', 0);
+        localStorage.setItem('vibeLastDate', today);
+    }
+    updateStatsUI();
+}
+
+function addMinutesToStats(minutesAdded) {
+    checkDailyReset(); 
+    
+    let current = parseFloat(localStorage.getItem('vibeDailyMinutes') || 0);
+    current += minutesAdded;
+    
+    localStorage.setItem('vibeDailyMinutes', current);
+    updateStatsUI();
+}
+
+
+// --- AUDIO LOGIC ---
 function changeRadioTrack(index) {
     const player = document.getElementById('lofi-player');
     if (!player) return;
@@ -112,6 +162,8 @@ function updatePlayIcon(isPlaying) {
     if (icon) icon.className = isPlaying ? 'fas fa-pause' : 'fas fa-play';
 }
 
+
+// --- MODAL LOGIC ---
 function showModal(message) {
     const overlay = document.getElementById('custom-modal-overlay');
     const msg = document.getElementById('modal-message');
@@ -134,7 +186,6 @@ function startConcentrationTimer() {
     const option = concentrationOptions[currentConcIndex];
     if (!option || option.value <= 0) return;
 
-    console.log(`Focus Check ogni ${option.value} min`);
     concentrationTimer = setInterval(() => {
         const msgs = ["Stay focused! 🔥", "You're doing great! 🚀", "Drink water 💧"];
         showModal(msgs[Math.floor(Math.random() * msgs.length)]);
@@ -145,12 +196,15 @@ function stopConcentrationTimer() {
     if (concentrationTimer) clearInterval(concentrationTimer);
 }
 
+
+// --- STATE MANAGEMENT ---
 function saveState() {
     const radioPlayer = document.getElementById('lofi-player');
     
     const state = {
         time: timeRemaining,
         running: isRunning,
+        sessionMins: currentSessionMinutes, 
         
         radioIndex: currentRadioIndex,
         ambientIndex: currentAmbientIndex,
@@ -173,6 +227,8 @@ function loadState() {
     updateDropdownUI('ambient-custom-select', 0, ambientLibrary);
     updateDropdownUI('theme-custom-select', 0, themeLibrary);
     updateDropdownUI('concentration-custom-select', 3, concentrationOptions);
+    
+    checkDailyReset();
 
     if (!savedState) return; 
 
@@ -184,6 +240,8 @@ function loadState() {
     currentConcIndex = state.concIndex || 3;
     timeRemaining = state.time || DEFAULT_TIME_SECONDS;
     isRunning = state.running;
+    
+    if (state.sessionMins) currentSessionMinutes = state.sessionMins;
 
     updateDropdownUI('audio-custom-select', currentRadioIndex, radioLibrary);
     updateDropdownUI('ambient-custom-select', currentAmbientIndex, ambientLibrary);
@@ -229,6 +287,7 @@ function loadState() {
     }
 }
 
+
 // --- ENGINE TIMER ---
 function startTimerLoop() {
     if (timerInterval) clearInterval(timerInterval);
@@ -238,9 +297,18 @@ function startTimerLoop() {
             clearInterval(timerInterval);
             stopConcentrationTimer();
             isRunning = false;
+            
+            // AGGIUNTA PUNTI STATS (Usa i minuti impostati all'inizio)
+            addMinutesToStats(currentSessionMinutes);
+
+            bellSound.currentTime = 0;
             bellSound.play().catch(e => console.log(e));
+            
             document.getElementById('start-btn').textContent = 'Start';
-            timeRemaining = DEFAULT_TIME_SECONDS;
+            
+            // Resetta al tempo della sessione attuale
+            timeRemaining = currentSessionMinutes * 60;
+            
             updateDisplay();
             saveState();
             showModal("Time's up!");
@@ -252,7 +320,7 @@ function startTimerLoop() {
 
 function updateDisplay() {
     const m = Math.floor(timeRemaining / 60);
-    const s = timeRemaining % 60;
+    const s = Math.floor(timeRemaining % 60); 
     const timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     const display = document.getElementById('timer-display');
     if(display) display.textContent = timeString;
@@ -278,7 +346,7 @@ function resetTimer() {
     clearInterval(timerInterval);
     stopConcentrationTimer();
     isRunning = false;
-    timeRemaining = DEFAULT_TIME_SECONDS;
+    timeRemaining = currentSessionMinutes * 60; 
     document.getElementById('start-btn').textContent = 'Start';
     updateDisplay();
     saveState();
@@ -286,13 +354,15 @@ function resetTimer() {
 
 function setTime() {
     const input = document.getElementById('minutes-input');
-    const inputMinutes = input ? parseInt(input.value) : 25;
+    const inputMinutes = input ? parseFloat(input.value) : 25;
     
     if (isNaN(inputMinutes) || inputMinutes <= 0) return;
     
     clearInterval(timerInterval);
     stopConcentrationTimer();
     isRunning = false;
+    
+    currentSessionMinutes = inputMinutes; // Salva la nuova durata
     timeRemaining = inputMinutes * 60;
     
     const startBtn = document.getElementById('start-btn');
@@ -302,12 +372,28 @@ function setTime() {
     saveState();
 }
 
+function setMode(minutes) {
+    const input = document.getElementById('minutes-input');
+    if (input) {
+        input.value = minutes;
+        setTime(); // setTime si occuperà di aggiornare currentSessionMinutes
+    }
+}
+
 function toggleFullScreen() {
     const el = document.documentElement;
+    const radio = document.getElementById('lofi-player');
+    const ambient = document.getElementById('ambient-player');
+
     if (document.fullscreenElement) {
         if (document.exitFullscreen) document.exitFullscreen();
     } else {
-        if (el.requestFullscreen) el.requestFullscreen();
+        if (el.requestFullscreen) {
+            el.requestFullscreen().then(() => {
+                if (radio && !radio.paused) radio.play();
+                if (ambient && !ambient.paused) ambient.play();
+            }).catch(err => console.log(err));
+        }
     }
 }
 
@@ -362,6 +448,8 @@ function updateDropdownUI(id, idx, list) {
     w.querySelector('span').textContent = list[idx] ? list[idx].name : list[0].name;
 }
 
+
+// --- EVENTS ---
 document.addEventListener('DOMContentLoaded', () => {
     miniPlayerDetails = document.getElementById('mini-player-details');
     miniPlayerPlayBtn = document.getElementById('mini-player-play-btn');
@@ -416,6 +504,64 @@ document.addEventListener('DOMContentLoaded', () => {
         miniPlayerDetails.classList.toggle('hidden');
         saveState();
     };
+    
+    // --- GESTIONE RESET MODALE ---
+    const resetStatsBtn = document.getElementById('reset-stats-btn');
+    const confirmOverlay = document.getElementById('confirm-modal-overlay');
+    const confirmYes = document.getElementById('confirm-yes-btn');
+    const confirmNo = document.getElementById('confirm-no-btn');
+
+    if (resetStatsBtn) {
+        resetStatsBtn.onclick = () => {
+            if(confirmOverlay) {
+                confirmOverlay.classList.remove('hidden');
+                confirmOverlay.classList.add('active');
+            }
+        };
+    }
+
+    if (confirmYes) {
+        confirmYes.onclick = () => {
+            localStorage.setItem('vibeDailyMinutes', 0);
+            updateStatsUI();
+            confirmOverlay.classList.remove('active');
+            confirmOverlay.classList.add('hidden');
+        };
+    }
+
+    if (confirmNo) {
+        confirmNo.onclick = () => {
+            confirmOverlay.classList.remove('active');
+            confirmOverlay.classList.add('hidden');
+        };
+    }
+
+    // --- GESTIONE NOTEPAD (BRAIN DUMP) ---
+    const notepad = document.getElementById('floating-notepad');
+    const notepadToggle = document.getElementById('notepad-toggle');
+    const closeNotepad = document.getElementById('close-notepad-btn');
+    const textarea = document.getElementById('notepad-content');
+
+    if (textarea) textarea.value = localStorage.getItem('vibeNotepadContent') || '';
+    
+    if (notepadToggle) {
+        notepadToggle.onclick = () => {
+            notepad.classList.toggle('hidden');
+        };
+    }
+    
+    if (closeNotepad) {
+        closeNotepad.onclick = () => {
+            notepad.classList.add('hidden');
+        };
+    }
+    
+    if (textarea) {
+        textarea.addEventListener('input', () => {
+            localStorage.setItem('vibeNotepadContent', textarea.value);
+        });
+    }
+
     document.getElementById('modal-close-btn').onclick = closeModal;
     document.getElementById('settings-btn').onclick = () => document.getElementById('settings-panel').classList.toggle('visible');
     document.getElementById('close-settings-btn').onclick = () => document.getElementById('settings-panel').classList.remove('visible');
@@ -426,5 +572,61 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('click', e => {
     if(!e.target.closest('.custom-select-wrapper')) {
         document.querySelectorAll('.custom-select-wrapper').forEach(el => el.classList.remove('open'));
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.code === 'Space') {
+        e.preventDefault(); 
+        toggleTimer();
+    }
+
+    if (e.code === 'KeyR') {
+        resetTimer();
+    }
+
+    if (e.code === 'KeyF') {
+        toggleFullScreen();
+    }
+
+
+    if (e.code === 'KeyT') {
+        const notepad = document.getElementById('floating-notepad');
+        if (notepad) {
+            notepad.classList.toggle('hidden');
+            // Se lo apri, metti subito il focus per scrivere
+            if (!notepad.classList.contains('hidden')) {
+                setTimeout(() => document.getElementById('notepad-content').focus(), 100);
+            }
+        }
+    }
+
+
+    if (e.code === 'KeyM') {
+        const audioPanel = document.getElementById('mini-player-details');
+        if (audioPanel) {
+            audioPanel.classList.toggle('hidden');
+            saveState(); 
+        }
+    }
+
+
+    if (e.code === 'Escape') {
+        const settings = document.getElementById('settings-panel');
+        const modal = document.getElementById('custom-modal-overlay');
+        const resetModal = document.getElementById('confirm-modal-overlay');
+        const audioPanel = document.getElementById('mini-player-details');
+        const notepad = document.getElementById('floating-notepad');
+        
+        if (modal && !modal.classList.contains('hidden')) closeModal();
+        else if (resetModal && !resetModal.classList.contains('hidden')) {
+            resetModal.classList.remove('active');
+            resetModal.classList.add('hidden');
+        }
+        else if (settings && settings.classList.contains('visible')) settings.classList.remove('visible');
+        else if (audioPanel && !audioPanel.classList.contains('hidden')) audioPanel.classList.add('hidden');
+        else if (notepad && !notepad.classList.contains('hidden')) notepad.classList.add('hidden');
     }
 });

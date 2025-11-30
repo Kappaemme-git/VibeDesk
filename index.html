@@ -19,6 +19,8 @@
     
     <script defer src="/_vercel/insights/script.js"></script>
     
+    <link rel="preload" as="video" href="Video/GirlStudyingLofi.mp4" type="video/mp4">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -34,7 +36,14 @@
     <div id="app-container">
         
         <div id="timer-display">25:00</div>
-
+        
+        <div id="daily-stats">
+            Today's Focus: <span id="focus-minutes">0</span>m 🔥
+            <button id="reset-stats-btn" title="Reset stats">
+                <i class="fas fa-undo-alt"></i>
+            </button>
+        </div>
+        
         <div id="main-controls">
             <button id="start-btn">Start</button>
             <button id="reset-btn">Reset</button>
@@ -47,10 +56,27 @@
             <button id="close-settings-btn" title="Chiudi"><i class="fas fa-times"></i></button>
             <h3 style="margin: 0 0 20px 0; font-size: 1.2rem; color: #ddd;">Settings</h3>
             
-            <div id="config-timer">
-                <label for="minutes-input">Duration (minutes):</label>
-                <input type="number" id="minutes-input" value="25" min="1" max="600">
-                <button id="set-time-btn">Set</button>
+            <div id="config-timer" style="flex-direction: column; align-items: stretch; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="minutes-input" style="min-width: 60px;">Custom:</label>
+                    <input type="number" id="minutes-input" value="25" min="1" max="600" style="flex: 1;">
+                    <button id="set-time-btn">Set</button>
+                </div>
+
+                <div>
+                    <label style="font-size: 0.8rem; color: #888; margin-bottom: 8px; display: block;">Pomodoro Presets:</label>
+                    <div class="pomodoro-controls">
+                        <button onclick="setMode(25)" class="pomo-btn focus" title="Focus 25min">
+                            <i class="fas fa-brain"></i> 25
+                        </button>
+                        <button onclick="setMode(5)" class="pomo-btn break" title="Short Break 5min">
+                            <i class="fas fa-coffee"></i> 5
+                        </button>
+                        <button onclick="setMode(15)" class="pomo-btn long-break" title="Long Break 15min">
+                            <i class="fas fa-couch"></i> 15
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <div id="concentration-controls">
@@ -90,18 +116,15 @@
         <button id="audio-menu-toggle" class="fixed-control-btn"><i class="fas fa-music"></i></button>
         
         <div id="mini-player-details" class="hidden">
-            
             <div class="audio-group">
                 <div class="group-header">
                     <label><i class="fas fa-music"></i> Music Station</label>
                     <button id="mini-player-play-btn" class="play-btn-circle"><i class="fas fa-play"></i></button>
                 </div>
-                
                 <div class="custom-select-wrapper" id="audio-custom-select">
                     <div class="custom-select__trigger"><span>Radio Lofi</span><div class="arrow"></div></div>
                     <div class="custom-options"></div>
                 </div>
-
                 <div class="volume-container">
                     <i class="fas fa-volume-down small-icon"></i>
                     <input type="range" id="volume-slider" min="0" max="100" value="50">
@@ -115,12 +138,10 @@
                 <div class="group-header">
                     <label><i class="fas fa-cloud-moon"></i> Background Noise</label>
                 </div>
-
                 <div class="custom-select-wrapper" id="ambient-custom-select">
                     <div class="custom-select__trigger"><span>No Noise</span><div class="arrow"></div></div>
                     <div class="custom-options"></div>
                 </div>
-
                 <div class="volume-container">
                     <i class="fas fa-wind small-icon"></i>
                     <input type="range" id="ambient-volume-slider" min="0" max="100" value="30">
@@ -130,8 +151,19 @@
 
             <audio id="lofi-player" loop></audio>
             <audio id="ambient-player" loop></audio>
-
         </div>
+    </div>
+
+    <button id="notepad-toggle" class="fixed-control-btn" title="Note Veloci" style="position: fixed; bottom: 25px; left: 145px;">
+        <i class="fas fa-pen"></i>
+    </button>
+
+    <div id="floating-notepad" class="hidden">
+        <div class="notepad-header">
+            <span>📝 Brain Dump</span>
+            <button id="close-notepad-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <textarea id="notepad-content" placeholder="Write your tasks or ideas for later here..."></textarea>
     </div>
 
     <div id="custom-modal-overlay" class="hidden">
@@ -140,6 +172,18 @@
             <h3 id="modal-title">VibeDesk Focus</h3>
             <p id="modal-message">Stay focused!</p>
             <button id="modal-close-btn">Got it</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal-overlay" class="hidden">
+        <div id="custom-modal" style="border-color: rgba(255, 107, 107, 0.3);">
+            <div class="modal-icon">🗑️</div>
+            <h3 id="modal-title">Reset Stats?</h3>
+            <p id="modal-message">Are you sure you want to clear your daily progress?</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="confirm-yes-btn" style="background: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; font-family: 'Quicksand', sans-serif;">Yes, Reset</button>
+                <button id="confirm-no-btn" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 50px; cursor: pointer; font-family: 'Quicksand', sans-serif;">Cancel</button>
+            </div>
         </div>
     </div>
     
