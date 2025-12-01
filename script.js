@@ -81,8 +81,6 @@ const themeLibrary = [
     { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4', category: 'Lofi Vibes' },
 
     
-    
-
     { name: 'Galaxy Loop', type: 'video', url: 'Video/Galaxy.mp4', category: 'Space' },
     { name: 'Deep Space', type: 'image', url: 'Video/space.jpg', category: 'Space' },
 
