@@ -71,13 +71,16 @@ const ambientLibrary = [
 
 let currentThemeIndex = 0;
 const themeLibrary = [
+
+    { name: 'Christmas Girl', type: 'video', url: 'Video/Natale.mp4', category: 'Christmas Holiday' },
+    { name: 'Cozy Fireplace', type: 'video', url: 'Video/Camino.mp4', category: 'Christmas Holiday' },
+    
     { name: 'Girl Studying', type: 'video', url: 'Video/GirlStudyingLofi.mp4', category: 'Lofi Vibes' },
     { name: 'Lofi Cat', type: 'video', url: 'Video/lofiCat.mp4', category: 'Lofi Vibes' },
     { name: 'Girl on Train', type: 'video', url: 'Video/TrainGirl.mp4', category: 'Lofi Vibes' },
     { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4', category: 'Lofi Vibes' },
 
-    { name: 'Cozy Fireplace', type: 'video', url: 'Video/Camino.mp4', category: 'Christmas Holiday' },
-    { name: 'Christmas Girl', type: 'video', url: 'Video/Natale.mp4', category: 'Christmas Holiday' },
+    
     
 
     { name: 'Galaxy Loop', type: 'video', url: 'Video/Galaxy.mp4', category: 'Space' },
