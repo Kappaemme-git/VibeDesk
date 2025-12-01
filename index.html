@@ -166,6 +166,26 @@
         <textarea id="notepad-content" placeholder="Write your tasks or ideas for later here..."></textarea>
     </div>
 
+    <button id="calendar-toggle" class="fixed-control-btn" title="Calendario" style="position: fixed; bottom: 25px; right: 85px;">
+    <i class="fas fa-calendar-alt"></i>
+</button>
+
+<div id="floating-calendar" class="hidden">
+    <div class="calendar-header">
+        <button id="prev-month-btn"><i class="fas fa-chevron-left"></i></button>
+        <span id="calendar-month-year">December 2025</span>
+        <button id="next-month-btn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    
+    <div class="calendar-weekdays">
+        <div>Lu</div><div>Ma</div><div>Me</div><div>Gi</div><div>Ve</div><div>Sa</div><div>Do</div>
+    </div>
+    
+    <div class="calendar-grid" id="calendar-dates"></div>
+</div>
+
+
+
     <div id="custom-modal-overlay" class="hidden">
         <div id="custom-modal">
             <div class="modal-icon">🔥</div>

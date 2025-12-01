@@ -15,11 +15,48 @@ let miniPlayerPlayBtn = null;
 let miniPlayerDetails = null;
 
 let currentRadioIndex = 0;
+
+// --- LIBRERIA RADIO BASE ---
 const radioLibrary = [
-    { name: '🔴 Lofi Girl Radio', url: 'https://play.streamafrica.net/lofiradio' },
+    { name: '🎧 VibeDesk Radio', url: 'https://play.streamafrica.net/lofiradio' },
     { name: '☕ Coffee Shop', url: 'https://stream.zeno.fm/0r0xa792kwzuv' },
     { name: '🔇 No Music', url: '' } 
 ];
+
+// --- WINTER MODE (ATTIVAZIONE AUTOMATICA) 🎄❄️ ---
+const today = new Date();
+// Metti ">= 0" se vuoi testarlo oggi (Novembre), poi rimetti "=== 11" per Dicembre
+if (today.getMonth() >= 0) { 
+    
+    // 1. AGGIUNGI RADIO NATALE
+    radioLibrary.unshift({ 
+        name: '🎄 Christmas Hits', 
+        url: 'audio/xmas.mp3' // O usa 'audio/xmas.mp3' se hai il file locale
+    });
+
+    // 2. ATTIVA NEVE E TEMA ROSSO
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('christmas-mode');
+        setInterval(createSnow, 300); // Neve leggera
+        console.log("Winter Mode Activated: Let it snow! ❄️");
+    });
+}
+
+// Funzione Neve
+function createSnow() {
+    const snow = document.createElement('div');
+    snow.classList.add('snowflake');
+    snow.textContent = '❄'; 
+    snow.style.left = Math.random() * 100 + 'vw';
+    snow.style.animationDuration = Math.random() * 3 + 5 + 's';
+    snow.style.opacity = Math.random();
+    snow.style.fontSize = Math.random() * 10 + 10 + 'px';
+    
+    document.body.appendChild(snow);
+    
+    setTimeout(() => { snow.remove(); }, 8000);
+}
+// ----------------------------------------------------
 
 let currentAmbientIndex = 0;
 const ambientLibrary = [
@@ -34,28 +71,23 @@ const ambientLibrary = [
 
 let currentThemeIndex = 0;
 const themeLibrary = [
+    { name: 'Girl Studying', type: 'video', url: 'Video/GirlStudyingLofi.mp4', category: 'Lofi Vibes' },
+    { name: 'Lofi Cat', type: 'video', url: 'Video/lofiCat.mp4', category: 'Lofi Vibes' },
+    { name: 'Girl on Train', type: 'video', url: 'Video/TrainGirl.mp4', category: 'Lofi Vibes' },
+    { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4', category: 'Lofi Vibes' },
 
-    { name: 'Girl Studying', type: 'video', url: 'Video/GirlStudyingLofi.mp4' },
+    { name: 'Cozy Fireplace', type: 'video', url: 'Video/Camino.mp4', category: 'Christmas Holiday' },
+    { name: 'Christmas Girl', type: 'video', url: 'Video/Natale.mp4', category: 'Christmas Holiday' },
+    
 
-    { name: 'Lofi Cat', type: 'video', url: 'Video/lofiCat.mp4' },
+    { name: 'Galaxy Loop', type: 'video', url: 'Video/Galaxy.mp4', category: 'Space' },
+    { name: 'Deep Space', type: 'image', url: 'Video/space.jpg', category: 'Space' },
 
-    { name: 'Girl on Train', type: 'video', url: 'Video/TrainGirl.mp4' },
-
-    { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4' },
-
-     { name: 'Galaxy', type: 'video', url: 'Video/Galaxy.mp4' },
-
-     { name: 'FirePlace', type: 'video', url: 'Video/Camino.mp4' },
-
-    { name: 'Girl Studying (Static)', type: 'image', url: 'Video/girl.jpg' },
-
-    { name: 'LandScape (Static)', type: 'image', url: 'Video/landscape.jpg' },
-
-    { name: 'Monte Fuji (Static)', type: 'image', url: 'Video/monte.jpg' },
-
-    { name: 'Space (Static)', type: 'image', url: 'Video/space.jpg' },
-
+    { name: 'Lofi Girl', type: 'image', url: 'Video/girl.jpg', category: 'Static' },
+    { name: 'Landscape', type: 'image', url: 'Video/landscape.jpg', category: 'Static' },
+    { name: 'Mount Fuji', type: 'image', url: 'Video/monte.jpg', category: 'Static' }
 ];
+
 let currentConcIndex = 2;
 const concentrationOptions = [
     { name: 'Disabled', value: 0 },
@@ -71,7 +103,6 @@ function updateStatsUI() {
     const statEl = document.getElementById('focus-minutes');
     if (statEl) {
         let mins = parseFloat(localStorage.getItem('vibeDailyMinutes') || 0);
-        // Mostra numeri interi senza decimali se possibile
         statEl.textContent = Number.isInteger(mins) ? mins : mins.toFixed(1);
     }
 }
@@ -234,9 +265,10 @@ function loadState() {
 
     const state = JSON.parse(savedState);
     
-    currentRadioIndex = state.radioIndex || 0;
-    currentAmbientIndex = state.ambientIndex || 0;
-    currentThemeIndex = state.themeIndex || 0;
+    currentRadioIndex = (state.radioIndex < radioLibrary.length) ? state.radioIndex : 0;
+    currentAmbientIndex = (state.ambientIndex < ambientLibrary.length) ? state.ambientIndex : 0;
+    currentThemeIndex = (state.themeIndex < themeLibrary.length) ? state.themeIndex : 0;
+    
     currentConcIndex = state.concIndex || 3;
     timeRemaining = state.time || DEFAULT_TIME_SECONDS;
     isRunning = state.running;
@@ -298,15 +330,12 @@ function startTimerLoop() {
             stopConcentrationTimer();
             isRunning = false;
             
-            // AGGIUNTA PUNTI STATS (Usa i minuti impostati all'inizio)
             addMinutesToStats(currentSessionMinutes);
 
             bellSound.currentTime = 0;
             bellSound.play().catch(e => console.log(e));
             
             document.getElementById('start-btn').textContent = 'Start';
-            
-            // Resetta al tempo della sessione attuale
             timeRemaining = currentSessionMinutes * 60;
             
             updateDisplay();
@@ -376,7 +405,7 @@ function setMode(minutes) {
     const input = document.getElementById('minutes-input');
     if (input) {
         input.value = minutes;
-        setTime(); // setTime si occuperà di aggiornare currentSessionMinutes
+        setTime(); 
     }
 }
 
@@ -421,7 +450,18 @@ function setupCustomDropdown(wrapperId, dataList, callback) {
     const list = wrapper.querySelector('.custom-options');
     list.innerHTML = '';
     
+    let lastCategory = null;
+
     dataList.forEach((item, idx) => {
+        // CATEGORIE NEL MENU
+        if (item.category && item.category !== lastCategory) {
+            const catHeader = document.createElement('div');
+            catHeader.className = 'dropdown-category-header';
+            catHeader.textContent = item.category;
+            list.appendChild(catHeader);
+            lastCategory = item.category;
+        }
+
         const div = document.createElement('div');
         div.className = 'custom-option';
         div.textContent = item.name;
@@ -505,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveState();
     };
     
-    // --- GESTIONE RESET MODALE ---
+    // --- RESET STATS ---
     const resetStatsBtn = document.getElementById('reset-stats-btn');
     const confirmOverlay = document.getElementById('confirm-modal-overlay');
     const confirmYes = document.getElementById('confirm-yes-btn');
@@ -536,7 +576,62 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- GESTIONE NOTEPAD (BRAIN DUMP) ---
+    // --- GESTIONE CALENDARIO ---
+    const calendarEl = document.getElementById('floating-calendar');
+    const calToggle = document.getElementById('calendar-toggle');
+    const monthYearEl = document.getElementById('calendar-month-year');
+    const datesGrid = document.getElementById('calendar-dates');
+    const prevBtn = document.getElementById('prev-month-btn');
+    const nextBtn = document.getElementById('next-month-btn');
+
+    let currentDate = new Date(); 
+    let todayDate = new Date();   
+
+    function renderCalendar(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        monthYearEl.textContent = `${monthNames[month]} ${year}`;
+        datesGrid.innerHTML = ''; 
+
+        const firstDayIndex = new Date(year, month, 1).getDay(); 
+        const daysInMonth = new Date(year, month + 1, 0).getDate(); 
+        
+        let emptyDays = firstDayIndex - 1; 
+        if (emptyDays === -1) emptyDays = 6; 
+
+        for (let i = 0; i < emptyDays; i++) {
+            const emptyDiv = document.createElement('div');
+            emptyDiv.classList.add('empty');
+            datesGrid.appendChild(emptyDiv);
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.textContent = i;
+            if (i === todayDate.getDate() && month === todayDate.getMonth() && year === todayDate.getFullYear()) {
+                dayDiv.classList.add('today');
+            }
+            datesGrid.appendChild(dayDiv);
+        }
+    }
+
+    if (calToggle) {
+        calToggle.onclick = () => {
+            calendarEl.classList.toggle('hidden');
+            if (!calendarEl.classList.contains('hidden')) {
+                currentDate = new Date(); 
+                renderCalendar(currentDate);
+            }
+        };
+    }
+
+    if (prevBtn) prevBtn.onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(currentDate); };
+    if (nextBtn) nextBtn.onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(currentDate); };
+
+    renderCalendar(currentDate);
+
+    // --- GESTIONE NOTEPAD ---
     const notepad = document.getElementById('floating-notepad');
     const notepadToggle = document.getElementById('notepad-toggle');
     const closeNotepad = document.getElementById('close-notepad-btn');
@@ -547,6 +642,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (notepadToggle) {
         notepadToggle.onclick = () => {
             notepad.classList.toggle('hidden');
+            if (!notepad.classList.contains('hidden')) {
+                setTimeout(() => textarea.focus(), 100);
+            }
         };
     }
     
@@ -583,35 +681,34 @@ document.addEventListener('keydown', (e) => {
         toggleTimer();
     }
 
-    if (e.code === 'KeyR') {
-        resetTimer();
-    }
+    if (e.code === 'KeyR') resetTimer();
+    if (e.code === 'KeyF') toggleFullScreen();
 
-    if (e.code === 'KeyF') {
-        toggleFullScreen();
-    }
-
-
+    // T per Note
     if (e.code === 'KeyT') {
         const notepad = document.getElementById('floating-notepad');
         if (notepad) {
             notepad.classList.toggle('hidden');
-            // Se lo apri, metti subito il focus per scrivere
             if (!notepad.classList.contains('hidden')) {
                 setTimeout(() => document.getElementById('notepad-content').focus(), 100);
             }
         }
     }
 
-
+    // M per Mixer
     if (e.code === 'KeyM') {
         const audioPanel = document.getElementById('mini-player-details');
         if (audioPanel) {
             audioPanel.classList.toggle('hidden');
-            saveState(); 
+            saveState();
         }
     }
 
+    // C per Calendario
+    if (e.code === 'KeyC') {
+        const calendar = document.getElementById('floating-calendar');
+        if (calendar) calendar.classList.toggle('hidden');
+    }
 
     if (e.code === 'Escape') {
         const settings = document.getElementById('settings-panel');
@@ -619,6 +716,7 @@ document.addEventListener('keydown', (e) => {
         const resetModal = document.getElementById('confirm-modal-overlay');
         const audioPanel = document.getElementById('mini-player-details');
         const notepad = document.getElementById('floating-notepad');
+        const calendar = document.getElementById('floating-calendar');
         
         if (modal && !modal.classList.contains('hidden')) closeModal();
         else if (resetModal && !resetModal.classList.contains('hidden')) {
@@ -628,5 +726,6 @@ document.addEventListener('keydown', (e) => {
         else if (settings && settings.classList.contains('visible')) settings.classList.remove('visible');
         else if (audioPanel && !audioPanel.classList.contains('hidden')) audioPanel.classList.add('hidden');
         else if (notepad && !notepad.classList.contains('hidden')) notepad.classList.add('hidden');
+        else if (calendar && !calendar.classList.contains('hidden')) calendar.classList.add('hidden');
     }
 });
