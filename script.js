@@ -25,13 +25,12 @@ const radioLibrary = [
 
 // --- WINTER MODE (ATTIVAZIONE AUTOMATICA) 🎄❄️ ---
 const today = new Date();
-// Metti ">= 0" se vuoi testarlo oggi (Novembre), poi rimetti "=== 11" per Dicembre
 if (today.getMonth() >= 0) { 
     
     // 1. AGGIUNGI RADIO NATALE
     radioLibrary.unshift({ 
         name: '🎄 Christmas Hits', 
-        url: 'audio/xmas.mp3' // O usa 'audio/xmas.mp3' se hai il file locale
+        url: 'audio/xmas.mp3' 
     });
 
     // 2. ATTIVA NEVE E TEMA ROSSO
@@ -79,7 +78,7 @@ const themeLibrary = [
     { name: 'Lofi Cat', type: 'video', url: 'Video/lofiCat.mp4', category: 'Lofi Vibes' },
     { name: 'Girl on Train', type: 'video', url: 'Video/TrainGirl.mp4', category: 'Lofi Vibes' },
     { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4', category: 'Lofi Vibes' },
-
+    { name: 'Rain window', type: 'video', url: 'Video/RainWindow.mp4', category: 'Lofi Vibes' },
     
     { name: 'Galaxy Loop', type: 'video', url: 'Video/Galaxy.mp4', category: 'Space' },
     { name: 'Deep Space', type: 'image', url: 'Video/space.jpg', category: 'Space' },
