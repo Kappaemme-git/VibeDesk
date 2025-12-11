@@ -320,7 +320,6 @@ function loadState() {
 }
 
 
-// --- ENGINE TIMER ---
 function startTimerLoop() {
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
@@ -340,7 +339,17 @@ function startTimerLoop() {
             
             updateDisplay();
             saveState();
-            showModal("Time's up!");
+            
+            // 1. POPUP INTERNO (Quello che avevamo già)
+            showModal("Session Complete! ☕ ");
+
+            // 2. --- NUOVO: NOTIFICA DI SISTEMA (DESKTOP) ---
+            if (Notification.permission === "granted") {
+                new Notification("VibeDesk Timer", {
+                    body: "Time's up! ☕ Time for a break.",
+                });
+            }
+
         } else {
             updateDisplay();
         }
@@ -357,6 +366,14 @@ function updateDisplay() {
 }
 
 function toggleTimer() {
+    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                console.log("Notifiche attivate!");
+            }
+        });
+    }
+
     if (isRunning) {
         clearInterval(timerInterval);
         stopConcentrationTimer();
@@ -486,6 +503,64 @@ function updateDropdownUI(id, idx, list) {
     const w = document.getElementById(id);
     if(!w) return;
     w.querySelector('span').textContent = list[idx] ? list[idx].name : list[0].name;
+}
+
+
+// --- NUOVA FUNZIONE DRAG & DROP ---
+function makeDraggable(elmnt) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  
+  // Cerchiamo l'header per usarlo come maniglia
+  const header = elmnt.querySelector('.notepad-header');
+  
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // Ottieni la posizione del cursore all'avvio
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // FIX IMPORTANTE: Se l'elemento è posizionato con bottom/right (CSS originale),
+    // dobbiamo convertirlo in top/left altrimenti "salta" appena lo tocchi.
+    const rect = elmnt.getBoundingClientRect();
+    
+    // Rimuove i vincoli originali CSS
+    elmnt.style.bottom = "auto";
+    elmnt.style.right = "auto";
+    // Rimuove eventuali trasformazioni di centratura (per mobile)
+    elmnt.style.transform = "none";
+    
+    // Imposta la posizione esatta in pixel usando top/left
+    elmnt.style.top = rect.top + "px";
+    elmnt.style.left = rect.left + "px";
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // Calcola il nuovo offset
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // Imposta la nuova posizione
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
 }
 
 
@@ -636,6 +711,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const notepadToggle = document.getElementById('notepad-toggle');
     const closeNotepad = document.getElementById('close-notepad-btn');
     const textarea = document.getElementById('notepad-content');
+    
+    // *** ATTIVA DRAG SU NOTEPAD ***
+    if (notepad) {
+        makeDraggable(notepad);
+    }
 
     if (textarea) textarea.value = localStorage.getItem('vibeNotepadContent') || '';
     
@@ -728,4 +808,17 @@ document.addEventListener('keydown', (e) => {
         else if (notepad && !notepad.classList.contains('hidden')) notepad.classList.add('hidden');
         else if (calendar && !calendar.classList.contains('hidden')) calendar.classList.add('hidden');
     }
+});
+
+document.addEventListener('mousedown', (e) => {
+    const notepad = document.getElementById('floating-notepad');
+    const toggleBtn = document.getElementById('notepad-toggle');
+
+    if (!notepad || notepad.classList.contains('hidden')) return;
+
+    if (notepad.contains(e.target) || (toggleBtn && toggleBtn.contains(e.target))) {
+        return;
+    }
+
+    notepad.classList.add('hidden');
 });

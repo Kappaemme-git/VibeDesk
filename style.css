@@ -309,7 +309,10 @@ input[type=range]::-webkit-slider-runnable-track {
     border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     display: flex; flex-direction: column; z-index: 10000;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
     opacity: 1; transform: translateY(0) scale(1); transform-origin: bottom left;
 }
 #floating-notepad.hidden { opacity: 0; transform: translateY(20px) scale(0.9); pointer-events: none; }
@@ -356,7 +359,9 @@ body.christmas-mode .calendar-grid div.today { background: #ff4757 !important; b
    ========================================= */
 #custom-modal-overlay, #confirm-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+    
+    background: rgba(0, 0, 0, 0.85); 
+    
     z-index: 99999; display: flex; justify-content: center; align-items: center;
     opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
 }
