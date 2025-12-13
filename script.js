@@ -824,3 +824,4 @@ document.addEventListener('mousedown', (e) => {
 
     notepad.classList.add('hidden');
 });
+/*pushato da pc*/
