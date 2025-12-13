@@ -20,7 +20,9 @@ let currentRadioIndex = 0;
 const radioLibrary = [
     { name: '🎧 VibeDesk Radio', url: 'https://play.streamafrica.net/lofiradio' },
     { name: '☕ Coffee Shop', url: 'https://stream.zeno.fm/0r0xa792kwzuv' },
+    { name: '💻 Coding Radio', url: 'https://stream.laut.fm/lofi' },
     { name: '🔇 No Music', url: '' } 
+
 ];
 
 // --- WINTER MODE (ATTIVAZIONE AUTOMATICA) 🎄❄️ ---
@@ -65,7 +67,9 @@ const ambientLibrary = [
     { name: '🔥 Fire', url: 'suoni/fire.mp3' },
     { name: '🌊 Ocean', url: 'suoni/ocean.mp3' },
     { name: '🌲 Forest', url: 'suoni/HotNature.mp3' },
-    { name: '🌌 Space', url: 'suoni/space.mp3' }
+    { name: '🌌 Space', url: 'suoni/space.mp3' },
+    { name: '⌨️ Keyboard', url: 'suoni/keyboard.mp3' }
+
 ];
 
 let currentThemeIndex = 0;
@@ -80,6 +84,14 @@ const themeLibrary = [
     { name: 'Chill Room', type: 'video', url: 'Video/Room.mp4', category: 'Lofi Vibes' },
     { name: 'Rain window', type: 'video', url: 'Video/RainWindow.mp4', category: 'Lofi Vibes' },
     
+    { name: 'Coding Boy', type: 'video', url: 'Video/boyCoding.mp4', category: 'Coding' },
+    { name: 'Hacker', type: 'video', url: 'Video/hacker.mp4', category: 'Coding' },
+
+    { name: 'Autumn', type: 'video', url: 'Video/autm.mp4', category: 'Pixel' },
+     { name: 'Pokemon Night', type: 'video', url: 'Video/pok.mp4', category: 'Pixel' },
+     { name: 'Japan Street', type: 'video', url: 'Video/japanStreet.mp4', category: 'Pixel' },
+    
+
     { name: 'Galaxy Loop', type: 'video', url: 'Video/Galaxy.mp4', category: 'Space' },
     { name: 'Deep Space', type: 'image', url: 'Video/space.jpg', category: 'Space' },
 
