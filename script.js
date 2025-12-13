@@ -340,10 +340,8 @@ function startTimerLoop() {
             updateDisplay();
             saveState();
             
-            // 1. POPUP INTERNO (Quello che avevamo già)
             showModal("Session Complete! ☕ ");
 
-            // 2. --- NUOVO: NOTIFICA DI SISTEMA (DESKTOP) ---
             if (Notification.permission === "granted") {
                 new Notification("VibeDesk Timer", {
                     body: "Time's up! ☕ Time for a break.",
@@ -408,7 +406,7 @@ function setTime() {
     stopConcentrationTimer();
     isRunning = false;
     
-    currentSessionMinutes = inputMinutes; // Salva la nuova durata
+    currentSessionMinutes = inputMinutes; 
     timeRemaining = inputMinutes * 60;
     
     const startBtn = document.getElementById('start-btn');
@@ -522,21 +520,15 @@ function makeDraggable(elmnt) {
   function dragMouseDown(e) {
     e = e || window.event;
     e.preventDefault();
-    // Ottieni la posizione del cursore all'avvio
     pos3 = e.clientX;
     pos4 = e.clientY;
 
-    // FIX IMPORTANTE: Se l'elemento è posizionato con bottom/right (CSS originale),
-    // dobbiamo convertirlo in top/left altrimenti "salta" appena lo tocchi.
     const rect = elmnt.getBoundingClientRect();
     
-    // Rimuove i vincoli originali CSS
     elmnt.style.bottom = "auto";
     elmnt.style.right = "auto";
-    // Rimuove eventuali trasformazioni di centratura (per mobile)
     elmnt.style.transform = "none";
     
-    // Imposta la posizione esatta in pixel usando top/left
     elmnt.style.top = rect.top + "px";
     elmnt.style.left = rect.left + "px";
 
@@ -547,12 +539,10 @@ function makeDraggable(elmnt) {
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
-    // Calcola il nuovo offset
     pos1 = pos3 - e.clientX;
     pos2 = pos4 - e.clientY;
     pos3 = e.clientX;
     pos4 = e.clientY;
-    // Imposta la nuova posizione
     elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
     elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
   }

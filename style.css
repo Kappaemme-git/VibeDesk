@@ -542,3 +542,7 @@ body.christmas-mode #timer-display { text-shadow: 0 0 30px rgba(255, 223, 128, 0
     #config-timer, #concentration-controls, #theme-controls { flex-direction: column; align-items: flex-start; gap: 5px; }
     .custom-select-wrapper { width: 100%; }
 }
+
+/* =========================================
+   12. SCROLLBAR PERSONALIZZATA
+   ========================================= */
