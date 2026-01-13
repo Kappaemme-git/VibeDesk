@@ -37,18 +37,36 @@
     </div>
 
     <div id="app-container">
-        <div id="timer-display">25:00</div>
-        <div id="daily-stats">
-            Today's Focus: <span id="focus-minutes">0</span>m 🔥
-            <button id="reset-stats-btn" title="Reset stats">
-                <i class="fas fa-undo-alt"></i>
-            </button>
+        <div id="timer-wrapper">
+            <div id="timer-display">25:00</div>
+            <div id="progress-ring" aria-hidden="true">
+                <svg viewBox="0 0 120 120" role="presentation">
+                    <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+                    <circle class="ring-progress" cx="60" cy="60" r="52"></circle>
+                </svg>
+            </div>
         </div>
         <div id="main-controls">
             <button id="start-btn">Start</button>
             <button id="reset-btn">Reset</button>
             <button id="settings-btn" title="Impostazioni">
                 <i class="fas fa-cog"></i> 
+            </button>
+        </div>
+        <div id="daily-stats" class="stats-card">
+            <div class="stats-item">
+                <span class="stats-label">Today</span>
+                <span class="stats-value"><span id="focus-minutes">0</span><span class="stats-unit">m</span></span>
+                <span class="stats-icon">🔥</span>
+            </div>
+            <div class="stats-divider" aria-hidden="true"></div>
+            <div class="stats-item">
+                <span class="stats-label">Streak</span>
+                <span class="stats-value"><span id="streak-count">0</span><span class="stats-unit">d</span></span>
+                <span class="stats-icon">⚡</span>
+            </div>
+            <button id="reset-stats-btn" title="Reset stats">
+                <i class="fas fa-undo-alt"></i>
             </button>
         </div>
 

@@ -1,11 +1,14 @@
 // --- COSTANTI E STATO ---
 const DEFAULT_TIME_SECONDS = 25 * 60;
 const bellSound = new Audio('audio/bell.mp3'); 
+const RING_RADIUS = 52;
+const RING_CIRC = 2 * Math.PI * RING_RADIUS;
 
 let timeRemaining = DEFAULT_TIME_SECONDS;
 let isRunning = false;
 let timerInterval = null;
 let concentrationTimer = null;
+let statsCheckpointSeconds = null;
 
 // VARIABILE FONDAMENTALE: Tiene traccia della durata sessione scelta (es. 25 o 5)
 let currentSessionMinutes = 25; 
@@ -25,38 +28,6 @@ const radioLibrary = [
 
 ];
 
-// --- WINTER MODE (ATTIVAZIONE AUTOMATICA) 🎄❄️ ---
-const today = new Date();
-if (today.getMonth() >= 0) { 
-    
-    // 1. AGGIUNGI RADIO NATALE
-    radioLibrary.unshift({ 
-        name: '🎄 Christmas Hits', 
-        url: 'audio/xmas.mp3' 
-    });
-
-    // 2. ATTIVA NEVE E TEMA ROSSO
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.classList.add('christmas-mode');
-        setInterval(createSnow, 300); // Neve leggera
-        console.log("Winter Mode Activated: Let it snow! ❄️");
-    });
-}
-
-// Funzione Neve
-function createSnow() {
-    const snow = document.createElement('div');
-    snow.classList.add('snowflake');
-    snow.textContent = '❄'; 
-    snow.style.left = Math.random() * 100 + 'vw';
-    snow.style.animationDuration = Math.random() * 3 + 5 + 's';
-    snow.style.opacity = Math.random();
-    snow.style.fontSize = Math.random() * 10 + 10 + 'px';
-    
-    document.body.appendChild(snow);
-    
-    setTimeout(() => { snow.remove(); }, 8000);
-}
 // ----------------------------------------------------
 
 let currentAmbientIndex = 0;
@@ -117,6 +88,31 @@ function updateStatsUI() {
         let mins = parseFloat(localStorage.getItem('vibeDailyMinutes') || 0);
         statEl.textContent = Number.isInteger(mins) ? mins : mins.toFixed(1);
     }
+    updateStreakUI();
+}
+
+function updateStreakUI() {
+    const streakEl = document.getElementById('streak-count');
+    if (!streakEl) return;
+    const streak = parseInt(localStorage.getItem('vibeStreakCount') || 0, 10);
+    streakEl.textContent = Number.isNaN(streak) ? 0 : streak;
+}
+
+function updateStreakOnFocusAdded() {
+    const today = new Date().toDateString();
+    const lastActive = localStorage.getItem('vibeStreakLastActive');
+    if (lastActive === today) return;
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
+
+    let streak = parseInt(localStorage.getItem('vibeStreakCount') || 0, 10);
+    streak = (lastActive === yesterdayStr) ? streak + 1 : 1;
+
+    localStorage.setItem('vibeStreakCount', streak);
+    localStorage.setItem('vibeStreakLastActive', today);
+    updateStreakUI();
 }
 
 function checkDailyReset() {
@@ -138,6 +134,7 @@ function addMinutesToStats(minutesAdded) {
     
     localStorage.setItem('vibeDailyMinutes', current);
     updateStatsUI();
+    if (minutesAdded > 0) updateStreakOnFocusAdded();
 }
 
 
@@ -325,6 +322,7 @@ function loadState() {
     }
 
     if (isRunning) {
+        statsCheckpointSeconds = timeRemaining;
         startTimerLoop();
         startConcentrationTimer();
         document.getElementById('start-btn').textContent = 'Pause';
@@ -341,13 +339,19 @@ function startTimerLoop() {
             stopConcentrationTimer();
             isRunning = false;
             
-            addMinutesToStats(currentSessionMinutes);
+            if (statsCheckpointSeconds !== null) {
+                const deltaSeconds = statsCheckpointSeconds;
+                if (deltaSeconds > 0) addMinutesToStats(deltaSeconds / 60);
+            } else {
+                addMinutesToStats(currentSessionMinutes);
+            }
 
             bellSound.currentTime = 0;
             bellSound.play().catch(e => console.log(e));
             
             document.getElementById('start-btn').textContent = 'Start';
             timeRemaining = currentSessionMinutes * 60;
+            statsCheckpointSeconds = null;
             
             updateDisplay();
             saveState();
@@ -373,7 +377,19 @@ function updateDisplay() {
     const display = document.getElementById('timer-display');
     if(display) display.textContent = timeString;
     document.title = `${timeString} | VibeDesk`;
+    updateProgressRing();
 }
+
+function updateProgressRing() {
+    const ring = document.querySelector('.ring-progress');
+    if (!ring) return;
+    const totalSeconds = Math.max(1, currentSessionMinutes * 60);
+    const progress = Math.min(1, Math.max(0, 1 - (timeRemaining / totalSeconds)));
+    const offset = RING_CIRC * (1 - progress);
+    ring.style.strokeDasharray = `${RING_CIRC} ${RING_CIRC}`;
+    ring.style.strokeDashoffset = `${offset}`;
+}
+
 
 function toggleTimer() {
     if (Notification.permission !== "granted" && Notification.permission !== "denied") {
@@ -388,9 +404,15 @@ function toggleTimer() {
         clearInterval(timerInterval);
         stopConcentrationTimer();
         isRunning = false;
+        if (statsCheckpointSeconds !== null) {
+            const deltaSeconds = statsCheckpointSeconds - timeRemaining;
+            if (deltaSeconds > 0) addMinutesToStats(deltaSeconds / 60);
+            statsCheckpointSeconds = timeRemaining;
+        }
         document.getElementById('start-btn').textContent = 'Resume';
     } else {
         isRunning = true;
+        statsCheckpointSeconds = timeRemaining;
         startTimerLoop();
         startConcentrationTimer();
         document.getElementById('start-btn').textContent = 'Pause';
@@ -403,6 +425,7 @@ function resetTimer() {
     stopConcentrationTimer();
     isRunning = false;
     timeRemaining = currentSessionMinutes * 60; 
+    statsCheckpointSeconds = null;
     document.getElementById('start-btn').textContent = 'Start';
     updateDisplay();
     saveState();
@@ -420,6 +443,7 @@ function setTime() {
     
     currentSessionMinutes = inputMinutes; 
     timeRemaining = inputMinutes * 60;
+    statsCheckpointSeconds = null;
     
     const startBtn = document.getElementById('start-btn');
     if(startBtn) startBtn.textContent = 'Start';
@@ -824,4 +848,3 @@ document.addEventListener('mousedown', (e) => {
 
     notepad.classList.add('hidden');
 });
-/*pushato da pc*/

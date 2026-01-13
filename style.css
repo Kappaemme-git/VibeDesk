@@ -12,6 +12,13 @@ html, body {
     -webkit-tap-highlight-color: transparent; 
 }
 
+:root {
+    --accent-purple: #7b5cff;
+    --accent-purple-dark: #6a4cff;
+    --accent-purple-soft: rgba(123, 92, 255, 0.12);
+    --accent-purple-shadow: rgba(123, 92, 255, 0.4);
+}
+
 /* Sfondo Video/Img */
 #background-media {
     position: fixed;
@@ -45,6 +52,8 @@ html, body {
    2. TIMER & STATISTICHE
    ========================================= */
 #timer-display {
+    position: relative;
+    z-index: 1;
     font-weight: 700;
     margin-bottom: 30px;
     letter-spacing: 2px;
@@ -57,29 +66,115 @@ html, body {
 
 #timer-display.long-text { font-size: clamp(3rem, 10vw, 9rem); }
 
-#daily-stats {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: -20px; margin-bottom: 25px;
-    font-weight: 500;
-    text-transform: uppercase; letter-spacing: 1px;
-    background: rgba(0,0,0,0.3);
-    padding: 5px 15px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
+#timer-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#focus-minutes { color: #fff; font-weight: 700; }
+#progress-ring {
+    position: absolute;
+    width: clamp(160px, 40vw, 260px);
+    height: clamp(160px, 40vw, 260px);
+    pointer-events: none;
+}
+
+#progress-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 6;
+}
+
+.ring-progress {
+    fill: none;
+    stroke: var(--accent-purple);
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 0 999;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.4s ease;
+}
+
+#daily-stats {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.stats-card {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(187, 170, 255, 0.1), rgba(120, 95, 255, 0.06));
+    border: 0.5px solid rgba(187, 170, 255, 0.16);
+    backdrop-filter: blur(6px);
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.stats-item {
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: 4px 10px;
+}
+
+.stats-label {
+    grid-column: 1 / -1;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.stats-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.stats-unit {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.stats-icon {
+    font-size: 1.2rem;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.stats-divider {
+    width: 1px;
+    height: 28px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.35), transparent);
+}
 
 #reset-stats-btn {
-    background: transparent; border: none;
-    color: rgba(255, 255, 255, 0.3);
-    cursor: pointer; margin-left: 10px;
-    font-size: 0.8rem; padding: 5px;
-    border-radius: 50%; transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
 }
 #reset-stats-btn:hover {
-    color: #ff6b6b; background: rgba(255, 107, 107, 0.1);
+    color: #fff;
+    background: var(--accent-purple);
     transform: rotate(-180deg);
 }
 
@@ -90,11 +185,15 @@ html, body {
 #main-controls {
     display: flex; gap: 12px; 
     align-items: center; justify-content: center;
-    background: rgba(0, 0, 0, 0.5); 
-    backdrop-filter: blur(5px); 
+    margin-top: 26px;
     padding: 10px 20px; 
     border-radius: 50px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6); 
+    background: linear-gradient(135deg, rgba(187, 170, 255, 0.1), rgba(120, 95, 255, 0.06));
+    border: 0.5px solid rgba(187, 170, 255, 0.16);
+    backdrop-filter: blur(6px);
+    box-shadow:
+        0 10px 22px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
     flex-wrap: wrap; max-width: 95%;
 }
 
@@ -104,14 +203,14 @@ html, body {
     font-size: 1rem; font-weight: 700; 
     cursor: pointer; transition: all 0.2s ease-out; 
     border: none;
-    background: linear-gradient(135deg, #ff6b6b, #ff6b6b); 
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-dark)); 
     color: white; 
-    box-shadow: 0 4px 15px rgba(235, 47, 63, 0.4); 
+    box-shadow: 0 4px 15px var(--accent-purple-shadow); 
     white-space: nowrap;
 }
 #main-controls button:hover {
     transform: translateY(-2px); 
-    background: linear-gradient(135deg,#ff6b6b,#ff6b6b); 
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-dark)); 
 }
 
 #settings-btn {
@@ -187,12 +286,12 @@ html, body {
 
 #set-time-btn {
     padding: 8px 15px; border-radius: 8px;
-    background:#ff6b6b; color: white; border: none; cursor: pointer;
+    background: var(--accent-purple); color: white; border: none; cursor: pointer;
 }
 
 #close-settings-btn {
     position: absolute; top: 15px; right: 15px;
-    background: rgba(231, 43, 43, 0.1); border: none;
+    background: var(--accent-purple-soft); border: none;
     width: 30px; height: 30px; border-radius: 50%;
     color: #fff; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
@@ -208,9 +307,9 @@ html, body {
     font-size: 0.95rem; transition: transform 0.2s;
 }
 .pomo-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
-.pomo-btn.focus { background: #ff6b6b; box-shadow: 0 4px 15px rgba(248, 59, 59, 0.3); }
-.pomo-btn.break { background:#ff6b6b; box-shadow: 0 4px 15px rgba(248, 59, 59, 0.3); }
-.pomo-btn.long-break { background: #ff6b6b; box-shadow: 0 4px 15px rgba(248, 59, 59, 0.3); }
+.pomo-btn.focus { background: var(--accent-purple); box-shadow: 0 4px 15px rgba(123, 92, 255, 0.3); }
+.pomo-btn.break { background: var(--accent-purple); box-shadow: 0 4px 15px rgba(123, 92, 255, 0.3); }
+.pomo-btn.long-break { background: var(--accent-purple); box-shadow: 0 4px 15px rgba(123, 92, 255, 0.3); }
 
 
 /* =========================================
@@ -240,7 +339,7 @@ html, body {
     pointer-events: none; transform: translateY(10px); 
     transition: all 0.2s ease-in-out;
     max-height: 200px; overflow-y: auto;
-    scrollbar-width: thin; scrollbar-color: #ff6b6b rgba(0,0,0,0.3);
+    scrollbar-width: thin; scrollbar-color: var(--accent-purple) rgba(0,0,0,0.3);
 }
 .custom-select-wrapper.open .custom-options {
     opacity: 1; visibility: visible; pointer-events: all; transform: translateY(0);
@@ -249,13 +348,13 @@ html, body {
     padding: 10px 15px; font-size: 0.9rem; color: #ddd; cursor: pointer;
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-.custom-option:hover, .custom-option.selected { background-color:#ff6b6b; color: #fff; }
+.custom-option:hover, .custom-option.selected { background-color: var(--accent-purple); color: #fff; }
 
 /* Categorie nel menu */
 .dropdown-category-header {
     padding: 8px 12px; font-size: 0.75rem; font-weight: 800;
     text-transform: uppercase; letter-spacing: 1px;
-    color:#ff6b6b; background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-purple); background: rgba(255, 255, 255, 0.05);
     pointer-events: none; margin-top: 5px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
@@ -282,9 +381,9 @@ html, body {
 .group-header label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #888; }
 .play-btn-circle {
     width: 32px; height: 32px; border-radius: 50%;
-    background:#ff6b6b; border: none; color: white;
+    background: var(--accent-purple); border: none; color: white;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+    cursor: pointer; box-shadow: 0 4px 10px rgba(123, 92, 255, 0.3);
 }
 .separator-line { height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0; }
 .volume-container { display: flex; align-items: center; gap: 10px; padding: 5px 0 0 0; }
@@ -323,7 +422,7 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 .notepad-header span { font-weight: 700; color: #ddd; font-size: 0.9rem; }
 #close-notepad-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1rem; padding: 5px; }
-#close-notepad-btn:hover { color: #ff6b6b; }
+#close-notepad-btn:hover { color: var(--accent-purple); }
 #notepad-content {
     flex: 1; background: transparent; border: none; padding: 15px;
     color: #eee; font-family: 'Quicksand', sans-serif; font-size: 1rem;
@@ -350,8 +449,8 @@ input[type=range]::-webkit-slider-runnable-track {
 .calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; padding: 0 10px; }
 .calendar-weekdays { margin-top: 10px; margin-bottom: 5px; font-size: 0.75rem; color: #666; font-weight: bold; }
 .calendar-grid div { height: 30px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #ccc; cursor: default; border-radius: 6px; margin-bottom: 2px; }
-.calendar-grid div.today { background: #ff6b6b; color: white; font-weight: bold; box-shadow: 0 2px 8px rgba(123, 104, 238, 0.4); }
-body.christmas-mode .calendar-grid div.today { background: #ff4757 !important; box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4) !important; }
+.calendar-grid div.today { background: var(--accent-purple); color: white; font-weight: bold; box-shadow: 0 2px 8px rgba(123, 92, 255, 0.4); }
+body.christmas-mode .calendar-grid div.today { background: var(--accent-purple-dark) !important; box-shadow: 0 2px 8px rgba(123, 92, 255, 0.4) !important; }
 
 
 /* =========================================
@@ -380,7 +479,7 @@ body.christmas-mode .calendar-grid div.today { background: #ff4757 !important; b
 #modal-title { margin: 0 0 10px 0; font-size: 1.5rem; }
 #modal-message { font-size: 1.1rem; margin-bottom: 20px; line-height: 1.5; }
 #modal-close-btn {
-    background: #ff7e5f; color: white; border: none;
+    background: var(--accent-purple); color: white; border: none;
     padding: 10px 25px; border-radius: 50px;
     font-size: 1rem; cursor: pointer; transition: transform 0.2s;
 }
@@ -397,24 +496,24 @@ body.christmas-mode .calendar-grid div.today { background: #ff4757 !important; b
 }
 @keyframes fall { to { transform: translateY(105vh); } }
 
-body.christmas-mode { --xmas-red: #ff4757; --xmas-dark-red: #ff6b81; }
+body.christmas-mode { --xmas-red: var(--accent-purple); --xmas-dark-red: var(--accent-purple-dark); }
 
 body.christmas-mode #start-btn, body.christmas-mode #reset-btn {
     background: linear-gradient(135deg, var(--xmas-red), var(--xmas-dark-red)) !important;
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4) !important;
+    box-shadow: 0 4px 15px rgba(123, 92, 255, 0.4) !important;
 }
 body.christmas-mode #settings-btn, body.christmas-mode .play-btn-circle, body.christmas-mode #set-time-btn {
     background: var(--xmas-red) !important; color: white !important;
 }
 body.christmas-mode .pomo-btn#pomo-25, body.christmas-mode .pomo-btn#pomo-5, body.christmas-mode .pomo-btn#pomo-15 {
     background: linear-gradient(135deg, var(--xmas-red), var(--xmas-dark-red)) !important;
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.5) !important;
+    box-shadow: 0 4px 15px rgba(123, 92, 255, 0.5) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important; color: white !important;
 }
 body.christmas-mode input[type=range]::-webkit-slider-thumb {
     background: var(--xmas-red) !important; border: 2px solid white !important;
 }
-body.christmas-mode .dropdown-category-header { color: #ff4757; }
+body.christmas-mode .dropdown-category-header { color: var(--accent-purple); }
 body.christmas-mode #timer-display { text-shadow: 0 0 30px rgba(255, 223, 128, 0.6), 0 0 60px rgba(255, 200, 80, 0.3) !important; }
 
 
@@ -448,6 +547,13 @@ body.christmas-mode #timer-display { text-shadow: 0 0 30px rgba(255, 223, 128, 0
     #timer-display { margin-bottom: 20px; font-size: clamp(3.5rem, 15vw, 6rem); }
     #main-controls { padding: 8px 15px; gap: 10px; width: auto; }
     #main-controls button { padding: 10px 20px; font-size: 0.9rem; }
+    .stats-card {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+    .stats-divider { display: none; }
+    #reset-stats-btn { justify-self: end; }
 
     /* Footer Mobile */
     #credits-footer { right: auto; left: 50%; transform: translateX(-50%); bottom: 20px; padding: 8px 15px; white-space: nowrap; }
